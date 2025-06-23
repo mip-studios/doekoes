@@ -1,252 +1,522 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Doekoes</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #f9f9f9;
-      margin: 0;
-      padding: 1em;
-      max-width: 600px;
-      margin: auto;
-    }
-    h1 { text-align: center; color: #2c3e50; }
-    p.notice {
-      font-size: 0.9em;
-      color: #888;
-      text-align: center;
-      margin-bottom: 2em;
-    }
-    .goal-card {
-      background: white;
-      padding: 1em;
-      margin-bottom: 1em;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    }
-    .progress {
-      background: #eee;
-      border-radius: 4px;
-      overflow: hidden;
-      height: 20px;
-      margin: 0.5em 0;
-    }
-    .progress-bar {
-      background: #2ecc71;
-      height: 100%;
-    }
-    button, input[type="text"], input[type="number"], select {
-      padding: 0.5em;
-      margin-top: 0.5em;
-      width: 100%;
-      box-sizing: border-box;
-      font-size: 1em;
-    }
-    .hidden { display: none; }
-    .modal {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-content {
-      background: white;
-      padding: 1em;
-      border-radius: 6px;
-      max-width: 90%;
-      width: 400px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mijn Spaardoelen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --light-bg: #f0f2f5;
+            --light-text: #333;
+            --light-card-bg: #ffffff;
+            --light-border: #e0e0e0;
+            --light-primary: #4CAF50;
+            --light-accent: #FFC107;
+            --light-progress-bg: #e0e0e0;
+            --light-progress-fill: #4CAF50;
+        }
+
+        body.dark-mode {
+            --light-bg: #282c34;
+            --light-text: #e0e0e0;
+            --light-card-bg: #3c424a;
+            --light-border: #4a4f57;
+            --light-primary: #8bc34a;
+            --light-accent: #FFEB3B;
+            --light-progress-bg: #555;
+            --light-progress-fill: #8bc34a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--light-text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            line-height: 1.6;
+            padding-bottom: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--light-border);
+        }
+
+        h1 {
+            font-size: 2.2em;
+            color: var(--light-primary);
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            color: var(--light-text);
+        }
+
+        .card {
+            background-color: var(--light-card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--light-border);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: var(--light-text);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--light-border);
+            border-radius: 8px;
+            font-size: 1em;
+            background-color: var(--light-bg);
+            color: var(--light-text);
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--light-primary);
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--light-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        #compliment {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.1em;
+            font-style: italic;
+            color: var(--light-accent);
+            min-height: 25px; /* Om te voorkomen dat layout verspringt */
+        }
+
+        .goal-item {
+            background-color: var(--light-card-bg);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--light-border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .goal-name {
+            font-weight: 700;
+            font-size: 1.2em;
+            color: var(--light-primary);
+        }
+
+        .goal-amount {
+            font-weight: 700;
+            color: var(--light-text);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: var(--light-progress-bg);
+            border-radius: 5px;
+            height: 10px;
+            overflow: hidden;
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--light-progress-fill);
+            border-radius: 5px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .goal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .goal-actions input[type="number"] {
+            flex-grow: 1;
+            margin-bottom: 0;
+        }
+
+        .goal-actions button {
+            width: auto;
+            flex-shrink: 0;
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+        }
+
+        .delete-btn:hover {
+            background-color: #da190b;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--light-card-bg);
+            border: 1px solid var(--light-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .theme-toggle svg {
+            fill: var(--light-text);
+            width: 24px;
+            height: 24px;
+            transition: fill 0.3s ease;
+        }
+    </style>
 </head>
-<body>
+<body class="light-mode">
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+    </div>
 
-<h1>Doekoes</h1>
-<p class="notice">Testsite: gegevens worden alleen lokaal op je telefoon opgeslagen. Geen back-up.</p>
+    <div class="container">
+        <header>
+            <h1>Mijn Spaardoelen</h1>
+        </header>
 
-<div id="goals-list"></div>
+        <div class="card">
+            <h2>Welkom!</h2>
+            <label for="userName">Wat is je naam?</label>
+            <input type="text" id="userName" placeholder="Je naam">
+        </div>
 
-<button onclick="showGoalModal()">Nieuw doel</button>
+        <div class="card">
+            <h2>Nieuw Spaardoel Toevoegen</h2>
+            <label for="goalSelect">Kies een doel of vul er zelf één in:</label>
+            <select id="goalSelect">
+                <option value="">Kies...</option>
+                <option value="Vakantie">Vakantie</option>
+                <option value="Nieuwe Auto">Nieuwe Auto</option>
+                <option value="Huis">Huis</option>
+                <option value="Laptop">Nieuwe Laptop</option>
+                <option value="Telefoon">Nieuwe Telefoon</option>
+                <option value="Anders">Anders...</option>
+            </select>
+            <input type="text" id="customGoalName" placeholder="Of typ je eigen doel hier" style="display: none;">
 
-<div id="goal-modal" class="modal hidden">
-  <div class="modal-content">
-    <h2>Nieuw doel</h2>
-    <input type="text" id="goal-name" placeholder="Naam van het doel" />
-    <input type="number" id="goal-amount" placeholder="Totaalbedrag nodig" />
-    <input type="text" id="goal-deadline" placeholder="Deadline (optioneel)" />
-    <button onclick="addGoal()">Opslaan</button>
-  </div>
-</div>
+            <label for="goalAmount">Hoeveel wil je sparen?</label>
+            <input type="number" id="goalAmount" min="0.01" step="0.01" placeholder="Bijv. 500.00">
 
-<div id="earn-modal" class="modal hidden">
-  <div class="modal-content">
-    <h2>Geld verdiend</h2>
-    <select id="earn-method">
-      <option>Spullen verkocht</option>
-      <option>Lekkers gemaakt en verkocht</option>
-      <option>Lege flessen opgehaald</option>
-      <option>Auto gewassen</option>
-      <option>Boodschappen gedaan</option>
-      <option value="custom">Anders...</option>
-    </select>
-    <input type="text" id="custom-method" placeholder="Eigen omschrijving" class="hidden" />
-    <input type="number" id="earn-amount" placeholder="Hoeveel verdiend?" />
-    <button onclick="addEarning()">Toevoegen</button>
-  </div>
-</div>
+            <button onclick="addGoal()">Voeg Doel Toe</button>
+        </div>
 
-<script>
-let goals = JSON.parse(localStorage.getItem("doekoes_goals") || "[]");
-let user = localStorage.getItem("doekoes_user");
-let selectedGoalIndex = null;
+        <div id="compliment"></div>
 
-const compliments = [
-  "Lekker bezig!", "Dat tikt lekker aan!", "Money, money, money!", "Jij bent echt een spaarkoning(in)!",
-  "Sparend de wereld rond!", "Zeg, ben jij stiekem een miljonair in wording?", "Bam! Zo doe je dat.",
-  "Je bankrekening glimlacht.", "Spaardoel komt eraan!", "Je bent echt op dreef!", "Dat doel gaat eraan geloven.",
-  "Je hebt goud in handen.", "Wie heeft er een geldboom nodig als jij spaart?", "Je portemonnee is trots op je.",
-  "Wat een cash flow!", "Je zou economie moeten geven!", "Miljoenencampagne? Jij bent al halverwege!",
-  "Elke euro telt — en jij telt hard door!", "Je spaart sneller dan je schaduw.", "Doel in zicht? Jij hebt het al bijna te pakken!",
-  "Is dit magie? Nee, gewoon spaartalent.", "Zet hem op, geldheld!", "Zelfs je spaarpot applaudisseert.",
-  "Money moves maken, dat kan jij!", "Kassa! 🛒", "Jouw doel bibbert al van angst!", "Geld verdienen met stijl.",
-  "Spaarkampioen van de maand!", "Doekoes-machine geactiveerd!", "Je bent on fire 🔥", "Chapeau voor je cashflow!",
-  "Die euro’s weten niet wat ze meemaken.", "Je maakt geld verdienen leuk!", "Was sparen maar een sport — jij won goud!",
-  "Jouw inzet is bankwaardig!", "De euro’s vliegen je portemonnee in.", "Alsof je geld magnetisch aantrekt!",
-  "Je doel komt dichterbij, dollarbaas!", "Je portemonnee wordt al zwaarder.", "Toppie, spaarheld!",
-  "Cash is king — en jij bent de koning(in)!", "Geef jezelf een high five 🖐️", "Ben jij een spaarninja?",
-  "Die euro’s maken een polonaise!", "Zelfs een varken wil in jouw spaarpot wonen.",
-  "Je bankrekening voelt zich gezegend.", "Met jou komt dat doel er wel!", "Serieus, dit is indrukwekkend.",
-  "Geld verdienen + glimlachen = jij!", "Winstgevend én charmant!", "Die doelen krijgen geen schijn van kans!",
-  "Is dit nog sparen of al magie?", "Jij verdient een applaus én een koekje 🍪", "Spaardoel? Meer een spaardoelwit!",
-  "Je geld groeit als kool!", "Respect voor je spaardiscipline!", "Waanzinnig goed bezig!",
-  "Wat een geldheldendaad!", "Cashqueen / Cashking in actie!", "Sparen als een baas!"
-];
-let complimentIndex = parseInt(localStorage.getItem("doekoes_complimentIndex") || "0");
+        <div class="card">
+            <h2>Jouw Spaardoelen</h2>
+            <div id="goalsList">
+                <p style="text-align: center; color: var(--light-text);">Nog geen doelen toegevoegd.</p>
+            </div>
+        </div>
+    </div>
 
-if (!user) {
-  user = prompt("Wat is je naam?");
-  if (user) localStorage.setItem("doekoes_user", user);
-}
+    <script>
+        const userNameInput = document.getElementById('userName');
+        const goalSelect = document.getElementById('goalSelect');
+        const customGoalNameInput = document.getElementById('customGoalName');
+        const goalAmountInput = document.getElementById('goalAmount');
+        const goalsList = document.getElementById('goalsList');
+        const complimentDisplay = document.getElementById('compliment');
 
-function saveGoals() {
-  localStorage.setItem("doekoes_goals", JSON.stringify(goals));
-}
+        let goals = JSON.parse(localStorage.getItem('spaardoelen')) || [];
+        let userName = localStorage.getItem('userName') || '';
+        let lastComplimentTime = 0;
+        const complimentInterval = 5000; // 5 seconden tussen complimenten
 
-function showGoals() {
-  const list = document.getElementById("goals-list");
-  list.innerHTML = "";
-  goals.forEach((goal, index) => {
-    const div = document.createElement("div");
-    div.className = "goal-card";
-    const earned = goal.earnings.reduce((sum, e) => sum + e.amount, 0);
-    const remaining = Math.max(goal.amount - earned, 0);
-    const percent = Math.min(100, Math.round((earned / goal.amount) * 100));
-    div.innerHTML = `
-      <h3>${goal.name}</h3>
-      <div class="progress"><div class="progress-bar" style="width:${percent}%"></div></div>
-      <p>Resterend: €${remaining.toFixed(2)} van €${goal.amount}</p>
-      ${goal.deadline ? `<p>Deadline: ${goal.deadline}</p>` : ""}
-      <button onclick="openEarnModal(${index})">Voeg geld toe</button>
-      <button onclick="editGoal(${index})">Bewerk</button>
-      <button onclick="deleteGoal(${index})" style="color:red">Verwijder</button>
-    `;
-    list.appendChild(div);
-  });
-}
+        const defaultCompliments = [
+            "Fantastisch!",
+            "Geweldig werk!",
+            "Super bezig!",
+            "Je bent een ster!",
+            "Heel goed!",
+            "Zo, dat schiet op!",
+            "Daar ga je als een speer!",
+            "Klasse!",
+            "Ongelooflijk goed!",
+            "Je bent een spaar-kampioen!",
+            "Wow, indrukwekkend!",
+            "Perfectie!",
+            "Je bent onverslaanbaar!",
+            "Gefeliciteerd met je voortgang!",
+            "De beste spaarder van het land!",
+            "Nog even en je doel is bereikt!",
+            "Je bent een inspiratie!",
+            "Zoek de spaarpot maar op, want het is gelukt!",
+            "Je bent een pro!",
+            "Deze stap brengt je dichterbij!"
+        ];
 
-function showGoalModal() {
-  selectedGoalIndex = null;
-  document.getElementById("goal-name").value = "";
-  document.getElementById("goal-amount").value = "";
-  document.getElementById("goal-deadline").value = "";
-  document.getElementById("goal-modal").classList.remove("hidden");
-}
+        const nameCompliments = [
+            "Goed bezig, [naam]! Je bent alweer een stap dichterbij!",
+            "Wauw, [naam], je spaart als een kampioen! Dat doel komt steeds dichterbij!",
+            "Super, [naam]! Je bent op weg naar succes!",
+            "Hé [naam], fantastisch gedaan! Zo haal je je doel zeker!",
+            "Geweldig, [naam]! Je spaart de sterren van de hemel!"
+        ];
 
-function addGoal() {
-  const name = document.getElementById("goal-name").value.trim();
-  const amount = parseFloat(document.getElementById("goal-amount").value);
-  const deadline = document.getElementById("goal-deadline").value.trim();
-  if (!name || isNaN(amount)) return alert("Voer een geldige naam en bedrag in.");
-  if (selectedGoalIndex === null) {
-    goals.push({ name, amount, deadline, earnings: [] });
-  } else {
-    goals[selectedGoalIndex].name = name;
-    goals[selectedGoalIndex].amount = amount;
-    goals[selectedGoalIndex].deadline = deadline;
-  }
-  saveGoals();
-  showGoals();
-  document.getElementById("goal-modal").classList.add("hidden");
-}
+        // Laad naam bij opstarten
+        if (userName) {
+            userNameInput.value = userName;
+        }
 
-function editGoal(index) {
-  selectedGoalIndex = index;
-  const g = goals[index];
-  document.getElementById("goal-name").value = g.name;
-  document.getElementById("goal-amount").value = g.amount;
-  document.getElementById("goal-deadline").value = g.deadline;
-  document.getElementById("goal-modal").classList.remove("hidden");
-}
+        userNameInput.addEventListener('input', (e) => {
+            userName = e.target.value.trim();
+            localStorage.setItem('userName', userName);
+        });
 
-function deleteGoal(index) {
-  const goal = goals[index];
-  if (confirm(`Weet je zeker dat je "${goal.name}" wilt verwijderen?`)) {
-    goals.splice(index, 1);
-    saveGoals();
-    showGoals();
-  }
-}
+        goalSelect.addEventListener('change', () => {
+            if (goalSelect.value === 'Anders') {
+                customGoalNameInput.style.display = 'block';
+            } else {
+                customGoalNameInput.style.display = 'none';
+            }
+        });
 
-function openEarnModal(index) {
-  selectedGoalIndex = index;
-  document.getElementById("earn-method").value = "Spullen verkocht";
-  document.getElementById("custom-method").classList.add("hidden");
-  document.getElementById("earn-amount").value = "";
-  document.getElementById("earn-modal").classList.remove("hidden");
-}
+        function addGoal() {
+            let goalName = goalSelect.value;
+            if (goalName === 'Anders') {
+                goalName = customGoalNameInput.value.trim();
+            }
 
-document.getElementById("earn-method").addEventListener("change", () => {
-  document.getElementById("custom-method").classList.toggle(
-    "hidden",
-    document.getElementById("earn-method").value !== "custom"
-  );
-});
+            const targetAmount = parseFloat(goalAmountInput.value);
 
-function addEarning() {
-  const methodSel = document.getElementById("earn-method").value;
-  const method = methodSel === "custom"
-    ? document.getElementById("custom-method").value.trim()
-    : methodSel;
-  const amount = parseFloat(document.getElementById("earn-amount").value);
-  if (!method || isNaN(amount)) return alert("Vul een geldige methode en bedrag in.");
+            if (!goalName || !targetAmount || targetAmount <= 0) {
+                alert('Vul een geldig doel en een positief bedrag in.');
+                return;
+            }
 
-  const goal = goals[selectedGoalIndex];
-  goal.earnings.push({ method, amount });
-  saveGoals();
-  showGoals();
-  document.getElementById("earn-modal").classList.add("hidden");
+            const newGoal = {
+                id: Date.now(),
+                name: goalName,
+                target: targetAmount,
+                saved: 0
+            };
 
-  alert(getCompliment(goal));
-}
+            goals.push(newGoal);
+            saveGoals();
+            renderGoals();
+            goalAmountInput.value = '';
+            customGoalNameInput.value = '';
+            goalSelect.value = '';
+            customGoalNameInput.style.display = 'none';
+            giveCompliment();
+        }
 
-function getCompliment(goal) {
-  const compliment = compliments[complimentIndex % compliments.length]
-    .replace("!", `, ${Math.random() < 0.5 ? user : ""}!`);
-  complimentIndex++;
-  localStorage.setItem("doekoes_complimentIndex", complimentIndex);
-  const totalEarned = goal.earnings.reduce((sum, e) => sum + e.amount, 0);
-  if (totalEarned >= goal.amount) {
-    return `WOOOW! Je hebt je doel "${goal.name}" gehaald! 🎉🎉 Geweldig gedaan${Math.random() < 0.5 ? ', ' + user : ''}!`;
-  }
-  return compliment;
-}
+        function addMoney(goalId) {
+            const inputId = `addMoney-${goalId}`;
+            const amountToAdd = parseFloat(document.getElementById(inputId).value);
 
-showGoals();
-</script>
+            if (!amountToAdd || amountToAdd <= 0) {
+                alert('Voer een positief bedrag in om toe te voegen.');
+                return;
+            }
 
+            const goalIndex = goals.findIndex(goal => goal.id === goalId);
+            if (goalIndex !== -1) {
+                goals[goalIndex].saved += amountToAdd;
+                if (goals[goalIndex].saved > goals[goalIndex].target) {
+                    goals[goalIndex].saved = goals[goalIndex].target; // Niet overschrijden
+                }
+                saveGoals();
+                renderGoals();
+                document.getElementById(inputId).value = ''; // Leeg het invoerveld
+                giveCompliment();
+            }
+        }
+
+        function deleteGoal(goalId) {
+            if (confirm('Weet je zeker dat je dit doel wilt verwijderen?')) {
+                goals = goals.filter(goal => goal.id !== goalId);
+                saveGoals();
+                renderGoals();
+            }
+        }
+
+        function saveGoals() {
+            localStorage.setItem('spaardoelen', JSON.stringify(goals));
+        }
+
+        function renderGoals() {
+            goalsList.innerHTML = '';
+            if (goals.length === 0) {
+                goalsList.innerHTML = '<p style="text-align: center; color: var(--light-text);">Nog geen doelen toegevoegd.</p>';
+                return;
+            }
+
+            goals.forEach(goal => {
+                const percentage = (goal.saved / goal.target) * 100;
+                const remaining = goal.target - goal.saved;
+
+                const goalItem = document.createElement('div');
+                goalItem.className = 'goal-item';
+                goalItem.innerHTML = `
+                    <div class="goal-header">
+                        <span class="goal-name">${goal.name}</span>
+                        <span class="goal-amount">€${goal.saved.toFixed(2)} / €${goal.target.toFixed(2)}</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: ${percentage.toFixed(2)}%;"></div>
+                    </div>
+                    <p style="font-size: 0.9em; color: var(--light-text); margin-bottom: 10px;">
+                        Nog €${remaining.toFixed(2)} te gaan.
+                    </p>
+                    <div class="goal-actions">
+                        <input type="number" id="addMoney-${goal.id}" min="0.01" step="0.01" placeholder="Bedrag toevoegen">
+                        <button onclick="addMoney(${goal.id})">Toevoegen</button>
+                        <button class="delete-btn" onclick="deleteGoal(${goal.id})">Verwijder</button>
+                    </div>
+                `;
+                goalsList.appendChild(goalItem);
+            });
+        }
+
+        function giveCompliment() {
+            const now = Date.now();
+            if (now - lastComplimentTime < complimentInterval) {
+                return; // Geen compliment als het te snel achter elkaar is
+            }
+
+            let complimentText;
+            const useName = userName && Math.random() < 0.5; // 50% kans om naam te gebruiken
+            if (useName) {
+                const randomIndex = Math.floor(Math.random() * nameCompliments.length);
+                complimentText = nameCompliments[randomIndex].replace('[naam]', userName);
+            } else {
+                const randomIndex = Math.floor(Math.random() * defaultCompliments.length);
+                complimentText = defaultCompliments[randomIndex];
+            }
+
+            complimentDisplay.textContent = complimentText;
+            lastComplimentTime = now;
+
+            // Wis het compliment na een paar seconden
+            setTimeout(() => {
+                complimentDisplay.textContent = '';
+            }, 4000); // Compliment verdwijnt na 4 seconden
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+            updateThemeToggleIcon();
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+            updateThemeToggleIcon();
+        }
+
+        function updateThemeToggleIcon() {
+            const toggleSvg = document.querySelector('.theme-toggle svg');
+            if (document.body.classList.contains('dark-mode')) {
+                toggleSvg.innerHTML = `
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                `; // Moon icon
+            } else {
+                toggleSvg.innerHTML = `
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                `; // Sun icon
+            }
+        }
+
+        // Initialisatie
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            renderGoals();
+        });
+    </script>
 </body>
 </html>
