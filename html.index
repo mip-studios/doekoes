@@ -100,9 +100,152 @@
 </div>
 
 <script>
-// ↙️ GEHELE SCRIPT zit hier
-// PLAK HET SCRIPT UIT HET VORIGE ANTWOORD (volledige versie met complimenten + bewerk + verwijder)
-// Zie vorige ChatGPT-bericht voor de volledige JavaScript
+let goals = JSON.parse(localStorage.getItem("doekoes_goals") || "[]");
+let user = localStorage.getItem("doekoes_user");
+let selectedGoalIndex = null;
+
+const compliments = [
+  "Lekker bezig!", "Dat tikt lekker aan!", "Money, money, money!", "Jij bent echt een spaarkoning(in)!",
+  "Sparend de wereld rond!", "Zeg, ben jij stiekem een miljonair in wording?", "Bam! Zo doe je dat.",
+  "Je bankrekening glimlacht.", "Spaardoel komt eraan!", "Je bent echt op dreef!", "Dat doel gaat eraan geloven.",
+  "Je hebt goud in handen.", "Wie heeft er een geldboom nodig als jij spaart?", "Je portemonnee is trots op je.",
+  "Wat een cash flow!", "Je zou economie moeten geven!", "Miljoenencampagne? Jij bent al halverwege!",
+  "Elke euro telt — en jij telt hard door!", "Je spaart sneller dan je schaduw.", "Doel in zicht? Jij hebt het al bijna te pakken!",
+  "Is dit magie? Nee, gewoon spaartalent.", "Zet hem op, geldheld!", "Zelfs je spaarpot applaudisseert.",
+  "Money moves maken, dat kan jij!", "Kassa! 🛒", "Jouw doel bibbert al van angst!", "Geld verdienen met stijl.",
+  "Spaarkampioen van de maand!", "Doekoes-machine geactiveerd!", "Je bent on fire 🔥", "Chapeau voor je cashflow!",
+  "Die euro’s weten niet wat ze meemaken.", "Je maakt geld verdienen leuk!", "Was sparen maar een sport — jij won goud!",
+  "Jouw inzet is bankwaardig!", "De euro’s vliegen je portemonnee in.", "Alsof je geld magnetisch aantrekt!",
+  "Je doel komt dichterbij, dollarbaas!", "Je portemonnee wordt al zwaarder.", "Toppie, spaarheld!",
+  "Cash is king — en jij bent de koning(in)!", "Geef jezelf een high five 🖐️", "Ben jij een spaarninja?",
+  "Die euro’s maken een polonaise!", "Zelfs een varken wil in jouw spaarpot wonen.",
+  "Je bankrekening voelt zich gezegend.", "Met jou komt dat doel er wel!", "Serieus, dit is indrukwekkend.",
+  "Geld verdienen + glimlachen = jij!", "Winstgevend én charmant!", "Die doelen krijgen geen schijn van kans!",
+  "Is dit nog sparen of al magie?", "Jij verdient een applaus én een koekje 🍪", "Spaardoel? Meer een spaardoelwit!",
+  "Je geld groeit als kool!", "Respect voor je spaardiscipline!", "Waanzinnig goed bezig!",
+  "Wat een geldheldendaad!", "Cashqueen / Cashking in actie!", "Sparen als een baas!"
+];
+let complimentIndex = parseInt(localStorage.getItem("doekoes_complimentIndex") || "0");
+
+if (!user) {
+  user = prompt("Wat is je naam?");
+  if (user) localStorage.setItem("doekoes_user", user);
+}
+
+function saveGoals() {
+  localStorage.setItem("doekoes_goals", JSON.stringify(goals));
+}
+
+function showGoals() {
+  const list = document.getElementById("goals-list");
+  list.innerHTML = "";
+  goals.forEach((goal, index) => {
+    const div = document.createElement("div");
+    div.className = "goal-card";
+    const earned = goal.earnings.reduce((sum, e) => sum + e.amount, 0);
+    const remaining = Math.max(goal.amount - earned, 0);
+    const percent = Math.min(100, Math.round((earned / goal.amount) * 100));
+    div.innerHTML = `
+      <h3>${goal.name}</h3>
+      <div class="progress"><div class="progress-bar" style="width:${percent}%"></div></div>
+      <p>Resterend: €${remaining.toFixed(2)} van €${goal.amount}</p>
+      ${goal.deadline ? `<p>Deadline: ${goal.deadline}</p>` : ""}
+      <button onclick="openEarnModal(${index})">Voeg geld toe</button>
+      <button onclick="editGoal(${index})">Bewerk</button>
+      <button onclick="deleteGoal(${index})" style="color:red">Verwijder</button>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function showGoalModal() {
+  selectedGoalIndex = null;
+  document.getElementById("goal-name").value = "";
+  document.getElementById("goal-amount").value = "";
+  document.getElementById("goal-deadline").value = "";
+  document.getElementById("goal-modal").classList.remove("hidden");
+}
+
+function addGoal() {
+  const name = document.getElementById("goal-name").value.trim();
+  const amount = parseFloat(document.getElementById("goal-amount").value);
+  const deadline = document.getElementById("goal-deadline").value.trim();
+  if (!name || isNaN(amount)) return alert("Voer een geldige naam en bedrag in.");
+  if (selectedGoalIndex === null) {
+    goals.push({ name, amount, deadline, earnings: [] });
+  } else {
+    goals[selectedGoalIndex].name = name;
+    goals[selectedGoalIndex].amount = amount;
+    goals[selectedGoalIndex].deadline = deadline;
+  }
+  saveGoals();
+  showGoals();
+  document.getElementById("goal-modal").classList.add("hidden");
+}
+
+function editGoal(index) {
+  selectedGoalIndex = index;
+  const g = goals[index];
+  document.getElementById("goal-name").value = g.name;
+  document.getElementById("goal-amount").value = g.amount;
+  document.getElementById("goal-deadline").value = g.deadline;
+  document.getElementById("goal-modal").classList.remove("hidden");
+}
+
+function deleteGoal(index) {
+  const goal = goals[index];
+  if (confirm(`Weet je zeker dat je "${goal.name}" wilt verwijderen?`)) {
+    goals.splice(index, 1);
+    saveGoals();
+    showGoals();
+  }
+}
+
+function openEarnModal(index) {
+  selectedGoalIndex = index;
+  document.getElementById("earn-method").value = "Spullen verkocht";
+  document.getElementById("custom-method").classList.add("hidden");
+  document.getElementById("earn-amount").value = "";
+  document.getElementById("earn-modal").classList.remove("hidden");
+}
+
+document.getElementById("earn-method").addEventListener("change", () => {
+  document.getElementById("custom-method").classList.toggle(
+    "hidden",
+    document.getElementById("earn-method").value !== "custom"
+  );
+});
+
+function addEarning() {
+  const methodSel = document.getElementById("earn-method").value;
+  const method = methodSel === "custom"
+    ? document.getElementById("custom-method").value.trim()
+    : methodSel;
+  const amount = parseFloat(document.getElementById("earn-amount").value);
+  if (!method || isNaN(amount)) return alert("Vul een geldige methode en bedrag in.");
+
+  const goal = goals[selectedGoalIndex];
+  goal.earnings.push({ method, amount });
+  saveGoals();
+  showGoals();
+  document.getElementById("earn-modal").classList.add("hidden");
+
+  alert(getCompliment(goal));
+}
+
+function getCompliment(goal) {
+  const compliment = compliments[complimentIndex % compliments.length]
+    .replace("!", `, ${Math.random() < 0.5 ? user : ""}!`);
+  complimentIndex++;
+  localStorage.setItem("doekoes_complimentIndex", complimentIndex);
+  const totalEarned = goal.earnings.reduce((sum, e) => sum + e.amount, 0);
+  if (totalEarned >= goal.amount) {
+    return `WOOOW! Je hebt je doel "${goal.name}" gehaald! 🎉🎉 Geweldig gedaan${Math.random() < 0.5 ? ', ' + user : ''}!`;
+  }
+  return compliment;
+}
+
+showGoals();
 </script>
 
 </body>
