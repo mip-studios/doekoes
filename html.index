@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doekoes</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 1em;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 { text-align: center; color: #2c3e50; }
+    p.notice {
+      font-size: 0.9em;
+      color: #888;
+      text-align: center;
+      margin-bottom: 2em;
+    }
+    .goal-card {
+      background: white;
+      padding: 1em;
+      margin-bottom: 1em;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .progress {
+      background: #eee;
+      border-radius: 4px;
+      overflow: hidden;
+      height: 20px;
+      margin: 0.5em 0;
+    }
+    .progress-bar {
+      background: #2ecc71;
+      height: 100%;
+    }
+    button, input[type="text"], input[type="number"], select {
+      padding: 0.5em;
+      margin-top: 0.5em;
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 1em;
+    }
+    .hidden { display: none; }
+    .modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 1em;
+      border-radius: 6px;
+      max-width: 90%;
+      width: 400px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Doekoes</h1>
+<p class="notice">Testsite: gegevens worden alleen lokaal op je telefoon opgeslagen. Geen back-up.</p>
+
+<div id="goals-list"></div>
+
+<button onclick="showGoalModal()">Nieuw doel</button>
+
+<div id="goal-modal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Nieuw doel</h2>
+    <input type="text" id="goal-name" placeholder="Naam van het doel" />
+    <input type="number" id="goal-amount" placeholder="Totaalbedrag nodig" />
+    <input type="text" id="goal-deadline" placeholder="Deadline (optioneel)" />
+    <button onclick="addGoal()">Opslaan</button>
+  </div>
+</div>
+
+<div id="earn-modal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Geld verdiend</h2>
+    <select id="earn-method">
+      <option>Spullen verkocht</option>
+      <option>Lekkers gemaakt en verkocht</option>
+      <option>Lege flessen opgehaald</option>
+      <option>Auto gewassen</option>
+      <option>Boodschappen gedaan</option>
+      <option value="custom">Anders...</option>
+    </select>
+    <input type="text" id="custom-method" placeholder="Eigen omschrijving" class="hidden" />
+    <input type="number" id="earn-amount" placeholder="Hoeveel verdiend?" />
+    <button onclick="addEarning()">Toevoegen</button>
+  </div>
+</div>
+
+<script>
+// ↙️ GEHELE SCRIPT zit hier
+// PLAK HET SCRIPT UIT HET VORIGE ANTWOORD (volledige versie met complimenten + bewerk + verwijder)
+// Zie vorige ChatGPT-bericht voor de volledige JavaScript
+</script>
+
+</body>
+</html>
